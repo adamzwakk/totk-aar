@@ -1,3 +1,5 @@
+This fork makes it a bit more cross-platform/developer friendly and be a bit more self-contained. You can run launcher.py straight from python after creating the pipenv environment. Boilerplate shell.nix included!
+
 # Any Aspect Ratio for Tears of the Kingdom!
 A utility that dynamically creates a mod with a custom aspect ratio with HUD fix, custom controller merge, blackscreenfix, dfps, and more!
 

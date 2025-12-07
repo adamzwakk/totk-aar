@@ -3,3 +3,5 @@ build
 dist
 *.spec
 *.DS_Store
+C:/ ## Why oh why did they hardcode the path to C
+AnyAspectRatio

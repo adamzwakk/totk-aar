@@ -77,15 +77,17 @@ def pack(root, endianness, level, outname):
 
             fullname = ''.join([root, "/", filename])
 
+            folders = []
             i = 0
-            for folder in filename.split("/")[:-1]:
-                if not i:
-                    exec("folder%i = SarcLib.Folder(folder + '/'); arc.addFolder(folder%i)".replace('%i', str(i)))
+            for part in filename.split("/")[:-1]:
+                f = SarcLib.Folder(part + '/')
 
+                if folders:
+                    folders[-1].addFolder(f)
                 else:
-                    exec("folder%i = SarcLib.Folder(folder + '/'); folder%m.addFolder(folder%i)".replace('%i', str(i)).replace('%m', str(i - 1)))
+                    arc.addFolder(f)
 
-                i += 1
+                folders.append(f)
 
             with open(fullname, "rb") as f:
                 inb = f.read()

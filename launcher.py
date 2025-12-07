@@ -23,8 +23,8 @@ import psutil
 # Define the directory path
 
 username = getpass.getuser()
-aar_dir = f'C:\\Users\\{username}\\AppData\\Roaming\\totk-aar'
-gui_dir = f'C:\\Users\\{username}\\AppData\\Roaming\\totk-aar\\totk-aar-main'
+aar_dir = f'./'
+gui_dir = f'./'
 
 # Check if the directory exists
 if not os.path.exists(aar_dir):

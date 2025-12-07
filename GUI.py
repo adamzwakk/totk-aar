@@ -6,6 +6,7 @@ import customtkinter
 from customtkinter import *
 from PIL import Image, ImageTk
 import os
+import platform
 from threading import Thread
 import getpass
 from pathlib import Path
@@ -22,7 +23,6 @@ from compress import compress_zstd
 from extract import extract_blarc
 from script import patch_blarc
 from repack import pack_folder_to_blarc
-import pyautogui
 
 #######################
 #### Create Window ####
@@ -43,7 +43,8 @@ windowtitle = customtkinter.CTkLabel(master=root, font=(CTkFont, 20), text="Faya
 ###############################################
 
 # Visuals
-screen_width, screen_height = pyautogui.size()
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
 ar_numerator = StringVar(value=f"{screen_width}")
 ar_denominator = StringVar(value=f"{screen_height}")
 do_cutscene_fix = BooleanVar()
@@ -122,11 +123,11 @@ blyt_folder = None
 
 script_path = os.path.abspath(__file__)
 script_directory = os.path.dirname(script_path)
-icon_path = os.path.join(script_directory, 'icon.ico')
+icon_path = os.path.join(script_directory, 'icon.xbm')
 dfps_folder = os.path.join(script_directory, "dFPS")
 dfps_ini_folder = os.path.join(script_directory, "customini", "dfps")
 
-root.iconbitmap(icon_path)
+# root.iconbitmap(icon_path)
 
 ################################################
 ###########    HELPER FUNCTIONS      ###########
@@ -248,6 +249,26 @@ def create_patch():
     t = Thread(target=create_full)
     t.start()
 
+def yuzu_path(gameid, system):
+    if system == "Windows":
+        return Path(os.getenv("APPDATA")) / "yuzu" / "load" / gameid
+    elif system == "Darwin":
+        return Path.home() / "Library" / "Application Support" / "yuzu" / "load" / gameid
+    else:
+        return Path.home() / ".local" / "share" / "yuzu" / "load" / gameid
+
+def suyu_path(gameid, system):
+    if system == "Windows":
+        return Path(os.getenv("APPDATA")) / "suyu" / "load" / gameid
+    else:
+        return Path.home() / ".local" / "share" / "suyu" / "load" / gameid
+
+def ryujinx_path(gameid, system):
+    if system == "Windows":
+        return Path(os.getenv("APPDATA")) / "Ryujinx" / "mods" / "contents" / gameid
+    else:
+        return Path.home() / ".config" / "Ryujinx" / "mods" / "contents" / gameid
+
 def create_full():
     try:
         #################
@@ -260,17 +281,20 @@ def create_full():
         
         progressbar.start()
         
-        username = getpass.getuser()
+        system = platform.system()   # "Windows", "Linux", "Darwin"
+        username = os.getenv("USERNAME") or os.getenv("USER")
+        output_folder = None
+
         gameid = "0100F2C0115B6000"
         if output_yuzu.get() is True:
-            output_folder = f"C:/Users/{username}/AppData/Roaming/yuzu/load/{gameid}"
+            output_folder = yuzu_path(gameid, system)
             process_name = "yuzu.exe"
             # if mac, output_folder = f"Library/ApplicationSupport/yuzu/load/{gameid}"
         if output_ryujinx.get() is True:
-            output_folder = f"C:/Users/{username}/AppData/Roaming/Ryujinx/mods/contents/{gameid}"
+            output_folder = ryujinx_path(gameid, system)
             process_name = "ryujinx.exe"
         if output_suyu.get() is True:
-            output_folder = f"C:/Users/{username}/AppData/Roaming/suyu/load/{gameid}"
+            output_folder = suyu_path(gameid, system)
             process_name = "suyu.exe"
         else:
             process_name = ""
